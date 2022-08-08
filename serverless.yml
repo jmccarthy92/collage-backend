@@ -1,0 +1,90 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: gif-collage
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: "2"
+
+provider:
+  name: azure
+  region: Central US
+  runtime: nodejs12
+
+plugins:
+  - serverless-webpack
+  - serverless-azure-functions
+
+package:
+  individually: false
+  patterns:
+    - "!local.settings.json"
+    - "!.vscode/**"
+    - "!terraform/**"
+    - "!.eslintrc.js"
+    - "!.gitignore"
+
+functions:
+  getGifCollageState:
+    handler: src/functions/gif-collage-get/index.default
+    events:
+      - http: true
+        route: payoutBlacklist
+        methods:
+          - GET
+        authLevel: anonymous # can also be `function` or `admin`
+      - cosmosDB: true
+        name: payoutBlacklist
+        databaseName: gif-collage-${opt:env, 'dev'}
+        collectionName: gifUrl
+        connectionStringSetting: COSMOS_DB_CONNECTION
+        direction: in
+        sqlQuery: SELECT * from c
+      - http: true
+        direction: out
+  gifCollageListener:
+    handler: src/functions/gif-collage-listener/index.default
+    events:
+      - signalRTrigger: true
+        direction: in
+        name: signalRGifTrigger
+        hubName: gif-collage
+        category: messages
+        event: SendGif
+        connectionStringSetting: AzureSignalRConnectionString
+      - signalR: true
+        direction: out
+        name: signalRGif
+        hubName: gif-collage
+        connectionStringSetting: AzureSignalRConnectionString
+      - cosmosDB: true
+        direction: out
+        name: gifUrl
+        databaseName: gif-collage-${opt:env, 'dev'}
+        collectionName: gifUrl
+        connectionStringSetting: COSMOS_DB_CONNECTION
+        createIfNotExists: true
+  negotiateSignalR:
+    handler: src/functions/signalr-negotiate/index.default
+    events:
+      - http: true
+        route: negotiate
+        authLevel: anonymous
+      - http: true
+        direction: out
+      - signalRConnectionInfo: true
+        direction: in
+        name: connectionInfo
+        hubName: gif-collage
+        connectionStringSetting: AzureSignalRConnectionString
