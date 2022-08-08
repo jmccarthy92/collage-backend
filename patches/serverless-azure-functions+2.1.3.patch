@@ -1,5 +1,5 @@
 diff --git a/node_modules/serverless-azure-functions/lib/shared/bindings.json b/node_modules/serverless-azure-functions/lib/shared/bindings.json
-index 68ae262..9448aef 100644
+index 68ae262..a9f6f7d 100644
 --- a/node_modules/serverless-azure-functions/lib/shared/bindings.json
 +++ b/node_modules/serverless-azure-functions/lib/shared/bindings.json
 @@ -19,6 +19,163 @@
@@ -96,7 +96,7 @@ index 68ae262..9448aef 100644
 +                {
 +                    "name": "userId",
 +                    "value": "string",
-+                    "required": true,
++                    "required": false,
 +                    "label": "$signalRConnectionInfoIn_userId_label",
 +                    "help": "$signalRConnectionInfoIn_userId_help"
 +                },
@@ -113,7 +113,7 @@ index 68ae262..9448aef 100644
 +        },
 +        {
 +            "type": "signalRTrigger",
-+            "displayName": "$signalRConnectionInfoIn_displayName",
++            "displayName": "$signalRTriggerIn_displayName",
 +            "direction": "in",
 +            "enabledInTryMode": true,
 +            "settings": [
@@ -122,8 +122,8 @@ index 68ae262..9448aef 100644
 +                    "value": "string",
 +                    "defaultValue": "connectionInfo",
 +                    "required": true,
-+                    "label": "$signalRConnectionInfoIn_name_label",
-+                    "help": "$signalRConnectionInfoIn_name_help",
++                    "label": "$signalRTriggerIn_name_label",
++                    "help": "$signalRTriggerIn_name_help",
 +                    "validators": [
 +                        {
 +                            "expression": "^[a-zA-Z][a-zA-Z0-9]{0,127}$",
@@ -135,30 +135,30 @@ index 68ae262..9448aef 100644
 +                    "name": "hubName",
 +                    "value": "string",
 +                    "required": true,
-+                    "label": "$signalRConnectionInfoIn_hubName_label",
-+                    "help": "$signalRConnectionInfoIn_hubName_help"
++                    "label": "$signalRTriggerIn_hubName_label",
++                    "help": "$signalRTriggerIn_hubName_help"
 +                },
 +                {
 +                    "name": "category",
 +                    "value": "string",
 +                    "required": true,
-+                    "label": "$signalRConnectionInfoIn_category_label",
-+                    "help": "$signalRConnectionInfoIn_category_help"
++                    "label": "$signalRTriggerIn_category_label",
++                    "help": "$signalRTriggerIn_category_help"
 +                },
 +                {
 +                    "name": "event",
 +                    "value": "string",
 +                    "required": true,
-+                    "label": "$signalRConnectionInfoIn_event_label",
-+                    "help": "$signalRConnectionInfoIn_event_help"
++                    "label": "$signalRTriggerIn_event_label",
++                    "help": "$signalRTriggerIn_event_help"
 +                },
 +                {
 +                    "name": "connectionStringSetting",
 +                    "value": "string",
 +                    "resource": "SignalR",
 +                    "required": true,
-+                    "label": "$signalRConnectionInfoIn_connection_label",
-+                    "help": "$signalRConnectionInfoIn_connection_help",
++                    "label": "$signalRTriggerIn_connection_label",
++                    "help": "$signalRTriggerIn_connection_help",
 +                    "placeholder": "[variables('selectConnection')]"
 +                }
 +            ]
