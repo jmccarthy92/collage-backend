@@ -1,5 +1,5 @@
 resource "azurerm_cosmosdb_account" "dbaccount" {
-  name                = "cosmos-gif-collage-${var.environment}"
+  name                = "cosmos-${var.appname}-${var.environment}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   offer_type          = "Standard"
@@ -25,7 +25,7 @@ resource "azurerm_cosmosdb_account" "dbaccount" {
 }
 
 resource "azurerm_cosmosdb_sql_database" "db" {
-  name                = "gif-collage-${var.environment}"
+  name                = "${var.appname}-${var.environment}"
   resource_group_name = azurerm_resource_group.rg.name
   account_name        = azurerm_cosmosdb_account.dbaccount.name
 }

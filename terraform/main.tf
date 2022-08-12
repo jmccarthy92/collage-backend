@@ -33,7 +33,7 @@ locals {
 
   prod_only = local.prod_only_mapping[var.environment]
 
-  allowed_origins = var.environment == "dev" ? ["*"] : [data.terraform_remote_state.clientapp_services.outputs.react_app_url]
+  allowed_origins = ["*"]
 }
 
 resource "azurerm_application_insights" "application_insights" {

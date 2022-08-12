@@ -1,8 +1,8 @@
 diff --git a/node_modules/serverless-azure-functions/lib/shared/bindings.json b/node_modules/serverless-azure-functions/lib/shared/bindings.json
-index 68ae262..a9f6f7d 100644
+index 68ae262..2b334bc 100644
 --- a/node_modules/serverless-azure-functions/lib/shared/bindings.json
 +++ b/node_modules/serverless-azure-functions/lib/shared/bindings.json
-@@ -19,6 +19,163 @@
+@@ -19,6 +19,170 @@
          "apiHubTableConnectionHelp": "$variables_apiHubTableConnectionHelp"
      },
      "bindings": [
@@ -130,6 +130,13 @@ index 68ae262..a9f6f7d 100644
 +                            "errorText": "[variables('parameterName')]"
 +                        }
 +                    ]
++                },
++                {
++                    "name": "parameterNames",
++                    "value": "checkBoxList",
++                    "required": false,
++                    "label": "$signalRTriggerIn_parameterNames_label",
++                    "help": "$signalRTriggerIn_parameterNames_help"
 +                },
 +                {
 +                    "name": "hubName",

@@ -9,5 +9,5 @@ variable "environment" {
 
 variable "appname" {
   type    = string
-  default = "gif-collage"
+  default = "gifcollage"
 }

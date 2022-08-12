@@ -40,13 +40,13 @@ functions:
     handler: src/functions/gif-collage-get/index.default
     events:
       - http: true
-        route: payoutBlacklist
+        route: getGifCollageState
         methods:
           - GET
         authLevel: anonymous # can also be `function` or `admin`
       - cosmosDB: true
-        name: payoutBlacklist
-        databaseName: gif-collage-${opt:env, 'dev'}
+        name: getGifCollageState
+        databaseName: gifcollage-${opt:env, 'prod'}
         collectionName: gifUrl
         connectionStringSetting: COSMOS_DB_CONNECTION
         direction: in
@@ -59,19 +59,21 @@ functions:
       - signalR: true
         direction: in
         name: signalRGifTrigger
-        hubName: gif-collage
+        hubName: gifcollage
         category: messages
         event: SendGif
+        parameterNames:
+          - payload
         connectionStringSetting: AzureSignalRConnectionString
       - signalR: true
         direction: out
         name: signalRGif
-        hubName: gif-collage
+        hubName: gifcollage
         connectionStringSetting: AzureSignalRConnectionString
       - cosmosDB: true
         direction: out
         name: gifUrl
-        databaseName: gif-collage-${opt:env, 'dev'}
+        databaseName: gifcollage-${opt:env, 'prod'}
         collectionName: gifUrl
         connectionStringSetting: COSMOS_DB_CONNECTION
         createIfNotExists: true
@@ -86,5 +88,5 @@ functions:
       - signalRConnectionInfo: true
         direction: in
         name: connectionInfo
-        hubName: gif-collage
+        hubName: gifcollage
         connectionStringSetting: AzureSignalRConnectionString

@@ -1,13 +1,6 @@
 // Third-party dependencies
 import { AzureFunction, Context } from "@azure/functions";
-// Interfaces
-interface Output {
-  gifUrl: {
-    url: string;
-  };
-  signalRGif: any;
-}
-
+import { Output } from "./types";
 /**
  * Retrieves the GifURL Records from cosmos db database
  *
@@ -15,21 +8,21 @@ interface Output {
  * @param {HttpRequest} req
  * @returns {Promise<Output>} Http Response containing Gif Url records.
  */
-const gifListener: AzureFunction = async function (
-  _: Context,
-  invocation: any,
-  gifUrl: string
-): Promise<Output> {
+const gifListener: AzureFunction = async function ({
+  bindingData: {
+    payload: { url },
+  },
+}: Context): Promise<Output> {
   return {
     gifUrl: {
-      url: gifUrl,
+      url,
     },
     signalRGif: [
       {
         target: "newGif",
         arguments: [
           {
-            url: gifUrl,
+            url,
           },
         ],
       },

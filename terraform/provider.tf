@@ -8,7 +8,7 @@ terraform {
   }
 
   backend "remote" {
-    organization = "brkfst"
+    organization = "james-fun"
     workspaces {
       prefix = "gif-collage-"
     }
@@ -17,16 +17,16 @@ terraform {
   required_version = ">= 0.14.9"
 }
 
-data "terraform_remote_state" "clientapp_services" {
-  backend = "remote"
+# data "terraform_remote_state" "clientapp_services" {
+#   backend = "remote"
 
-  config = {
-    organization = "gif-collage"
-    workspaces = {
-      name = "gif-collage-reactapp-${var.environment == "prod" ? "test" : var.environment}"
-    }
-  }
-}
+#   config = {
+#     organization = "gif-collage"
+#     workspaces = {
+#       name = "gif-collage-reactapp-${var.environment == "prod" ? "test" : var.environment}"
+#     }
+#   }
+# }
 
 
 provider "azurerm" {

@@ -1,13 +1,7 @@
 // Third-party dependencies
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
-// Interfaces
-interface Output {
-  res: {
-    status: number;
-    body: any[];
-  };
-}
-
+import type { GifUrl } from "services/model/types";
+import { Output } from "./types";
 /**
  * Retrieves the GifURL Records from cosmos db database
  *
@@ -18,7 +12,7 @@ interface Output {
 const getGifUrls: AzureFunction = async function (
   _: Context,
   __: HttpRequest,
-  gifUrls: any[]
+  gifUrls: GifUrl[]
 ): Promise<Output> {
   return {
     res: {
