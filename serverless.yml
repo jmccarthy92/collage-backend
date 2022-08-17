@@ -70,6 +70,16 @@ functions:
         name: signalRGif
         hubName: gifcollage
         connectionStringSetting: AzureSignalRConnectionString
+  gifCollageUpload:
+    handler: src/functions/gif-collage-upload/index.default
+    events:
+      - eventGrid: true
+        name: eventGridEvent
+      - signalR: true
+        direction: out
+        name: signalRGif
+        hubName: gifcollage
+        connectionStringSetting: AzureSignalRConnectionString
       - cosmosDB: true
         direction: out
         name: gifUrl
@@ -77,6 +87,14 @@ functions:
         collectionName: gifUrl
         connectionStringSetting: COSMOS_DB_CONNECTION
         createIfNotExists: true
+  generateSasToken:
+    handler: src/functions/sas-token-post/index.default
+    events:
+      - http: true
+        route: generateSasToken
+        methods:
+          - POST
+        authLevel: anonymous
   negotiateSignalR:
     handler: src/functions/signalr-negotiate/index.default
     events:
