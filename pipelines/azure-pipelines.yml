@@ -1,0 +1,47 @@
+trigger:
+  - main
+
+variables:
+  azureSubscription: "james-subscription"
+  appName: ${{parameters.appname}}
+  tag: "$(Build.BuildId)"
+  # Agent VM image name
+  vmImageName: "ubuntu-latest"
+
+stages:
+  - stage: Build
+    displayName: Build and push stage
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - bash: |
+              npm install 
+              npm run build --if-present
+              npm prune --production
+          - task: ArchiveFiles@2
+            displayName: "Archive files"
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
+              includeRootFolder: false
+              archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+              artifactName: "drop"
+  - stage: Deploy
+    displayName: Deploy Function App
+    jobs:
+      - job: Deploy
+        displayName: Deploy
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: AzureFunctionApp@1 # Add this at the end of your file
+            inputs:
+              azureSubscription: $(azureSubscription)
+              appType: functionApp
+              appName: $(appName)
+              package: $(System.ArtifactsDirectory)/**/*.zip
