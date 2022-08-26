@@ -3,6 +3,9 @@ import type { GifUrl } from "services/model/types";
 export interface Output {
   res: {
     status: number;
-    body: GifUrl[];
+    body: {
+      gifUrls: GifUrl[];
+      continuationToken: string;
+    };
   };
 }

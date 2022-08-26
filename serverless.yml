@@ -44,13 +44,6 @@ functions:
         methods:
           - GET
         authLevel: anonymous # can also be `function` or `admin`
-      - cosmosDB: true
-        name: getGifCollageState
-        databaseName: gifcollage-${opt:env, 'prod'}
-        collectionName: gifUrl
-        connectionStringSetting: COSMOS_DB_CONNECTION
-        direction: in
-        sqlQuery: SELECT * from c
       - http: true
         direction: out
   gifCollageListener:

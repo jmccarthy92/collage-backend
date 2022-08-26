@@ -1,13 +1,18 @@
 // Third-party dependencies
+import { promisify } from "util";
 import { AzureFunction, Context } from "@azure/functions";
-import { Output } from "./types";
-import { get } from "https";
-import { createWriteStream, readFileSync, existsSync, mkdirSync } from "fs";
+import { GifDimension, Output } from "./types";
+import * as fs from "fs";
 // import { resize } from "lib/gifResize";
 // import { initializeContainerClient } from "lib/storage";
 // import { BlobUploadCommonResponse } from "@azure/storage-blob";
 import { CosmosClient, StatusCodes } from "@azure/cosmos";
 import { formatSignalRMessage } from "lib/signalr";
+import sizeOf from "image-size";
+import { downloadFileUrl } from "lib/file";
+import { GifUrl } from "services/model/types";
+const sizeOfAsync = promisify(sizeOf);
+
 const cosmosDb = new CosmosClient({
   endpoint: process.env.COSMOS_DB_URI,
   key: process.env.COSMOS_DB_KEY,
@@ -26,15 +31,18 @@ const gifListener: AzureFunction = async function ({
   },
 }: Context): Promise<Output> {
   // @TODO: Resize GIFs to a more appropriate size
-  // const fileURI = url.split("/").pop();
+  const fileName = url.split("/").pop();
   // await uploadResizedFile(fileURI);
   // const CONTAINER_NAME = process.env.BLOB_CONTAINER_NAME || "gifcollage";
   // const resizedGifUrl = `https://${blobClient.accountName}.blob.core.windows.net/${CONTAINER_NAME}/${blobName}`;
   const { container } = await cosmosDb.containers.createIfNotExists({
     id: "gifUrl",
   });
+  const { height, width } = await getImageDimension(url, fileName);
+  const gifUrl: GifUrl = { url, height, width };
   try {
-    await container.items.create({ url });
+    const { item } = await container.items.create(gifUrl);
+    gifUrl.id = item.id;
   } catch (error) {
     if (error.code === StatusCodes.Conflict) {
       return {
@@ -49,27 +57,19 @@ const gifListener: AzureFunction = async function ({
   }
 
   return {
-    signalRGif: [formatSignalRMessage("newGif", { url })],
+    signalRGif: [formatSignalRMessage("newGif", gifUrl)],
   };
 };
 
-function downloadFile(url: string, path: string): Promise<string> {
-  const file = createWriteStream(path);
-  if (!existsSync(process.env.TMP_STORAGE)) mkdirSync(process.env.TMP_STORAGE);
-
-  return new Promise((resolve, reject) => {
-    get(url, (response) => {
-      response.pipe(file);
-      file.on("error", (error: Error) => {
-        reject(error);
-      });
-      file.on("finish", () => {
-        file.close();
-        console.log("Download Completed");
-        resolve(path);
-      });
-    });
-  });
+async function getImageDimension(
+  url: string,
+  fileName: string
+): Promise<GifDimension> {
+  const path = `${process.env.TMP_STORAGE}/${fileName}`;
+  const tempPath = await downloadFileUrl(url, path);
+  const { height, width } = await sizeOfAsync(tempPath);
+  fs.unlinkSync(path);
+  return { height, width };
 }
 
 // async function uploadResizedFile(

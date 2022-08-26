@@ -1,9 +1,15 @@
 // Third-party dependencies
 import { AzureFunction, Context } from "@azure/functions";
-import { Output } from "functions/gif-collage-listener/types";
+import { GifDimension, Output } from "functions/gif-collage-listener/types";
 import { formatSignalRMessage } from "lib/signalr";
 import { initializeContainerClient } from "lib/storage";
 import { EventGridEvent } from "./types";
+import { promisify } from "util";
+import * as fs from "fs";
+import sizeOf from "image-size";
+import { BlockBlobClient } from "@azure/storage-blob";
+import { GifUrl } from "services/model/types";
+const sizeOfAsync = promisify(sizeOf);
 
 const BLOB_DIR = "files";
 
@@ -18,18 +24,19 @@ const gifListener: AzureFunction = async function (
   context: Context,
   { data: { url, contentType: mimeType, contentLength: size } }: EventGridEvent
 ): Promise<Output> {
+  const blobFullName = url.slice(url.lastIndexOf("/") + 1);
+  const blobClient = initializeContainerClient().getBlockBlobClient(
+    `${BLOB_DIR}/${blobFullName}`
+  );
   if (mimeType === "image/gif") {
+    const { height, width } = await getImageDimension(blobFullName, blobClient);
+    const gifUrl: GifUrl = { height, width, url };
     return {
-      gifUrl: {
-        url,
-      },
-      signalRGif: [formatSignalRMessage("newGif", { url })],
+      gifUrl,
+      signalRGif: [formatSignalRMessage("newGif", gifUrl)],
     };
   } else {
-    const blobFullName = url.slice(url.lastIndexOf("/") + 1);
-    await initializeContainerClient()
-      .getBlockBlobClient(`${BLOB_DIR}/${blobFullName}`)
-      .deleteIfExists();
+    await blobClient.deleteIfExists();
     // Return Errors to client through WebSocket via SignalR
     return {
       signalRGif: [
@@ -40,5 +47,16 @@ const gifListener: AzureFunction = async function (
     };
   }
 };
+
+async function getImageDimension(
+  fileName: string,
+  blobClient: BlockBlobClient
+): Promise<GifDimension> {
+  const path = `${process.env.TMP_STORAGE}/${fileName}`;
+  await blobClient.downloadToFile(path);
+  const { height, width } = await sizeOfAsync(path);
+  fs.unlinkSync(path);
+  return { height, width };
+}
 
 export default gifListener;
