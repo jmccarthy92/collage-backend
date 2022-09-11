@@ -1,5 +1,5 @@
 trigger:
-  - main
+  - master
 
 variables:
   azureSubscription: "james-subscription"
@@ -15,6 +15,7 @@ stages:
       - job: Build
         displayName: Build
         pool:
+          name: Default
           vmImage: $(vmImageName)
         steps:
           - bash: |
@@ -37,6 +38,7 @@ stages:
       - job: Deploy
         displayName: Deploy
         pool:
+          name: Default
           vmImage: $(vmImageName)
         steps:
           - task: AzureFunctionApp@1 # Add this at the end of your file
