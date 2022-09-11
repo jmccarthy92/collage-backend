@@ -44,4 +44,4 @@ stages:
               azureSubscription: $(azureSubscription)
               appType: functionApp
               appName: $(appName)
-              package: $(System.ArtifactsDirectory)/**/*.zip
+              package: $(System.DefaultWorkingDirectory)/**/*.zip
