@@ -8,15 +8,16 @@ variables:
   # Agent VM image name
   vmImageName: "ubuntu-latest"
 
+pool:
+  name: BKFT-JamesMcCar
+  vmImage: $(vmImageName)
+
 stages:
   - stage: Build
     displayName: Build and push stage
     jobs:
       - job: Build
         displayName: Build
-        pool:
-          name: Default
-          vmImage: $(vmImageName)
         steps:
           - bash: |
               npm install 
@@ -37,9 +38,6 @@ stages:
     jobs:
       - job: Deploy
         displayName: Deploy
-        pool:
-          name: Default
-          vmImage: $(vmImageName)
         steps:
           - task: AzureFunctionApp@1 # Add this at the end of your file
             inputs:
