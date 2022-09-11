@@ -3,7 +3,7 @@ trigger:
 
 variables:
   azureSubscription: "james-subscription"
-  appName: ${{parameters.appname}}
+  appName: gif-collage
   tag: "$(Build.BuildId)"
   # Agent VM image name
   vmImageName: "ubuntu-latest"
