@@ -27,10 +27,11 @@ stages:
             inputs:
               contents: ".webpack/service/**"
               targetFolder: $(System.DefaultWorkingDirectory)/build
+              flattenFolders: true
           - task: CopyFiles@2
             inputs:
               contents: "node_modules/**"
-              targetFolder: $(System.DefaultWorkingDirectory)/build/node_modules
+              targetFolder: $(System.DefaultWorkingDirectory)/build
           - task: ArchiveFiles@2
             displayName: "Archive files"
             inputs:
