@@ -28,10 +28,10 @@ stages:
             inputs:
               rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
               includeRootFolder: false
-              archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+              archiveFile: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
+              pathToPublish: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
               artifactName: "drop"
   - stage: Deploy
     displayName: Deploy Function App
