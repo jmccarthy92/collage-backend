@@ -1,0 +1,26 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "route": "negotiate",
+      "authLevel": "anonymous"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "signalRConnectionInfo",
+      "direction": "in",
+      "name": "connectionInfo",
+      "hubName": "gifcollage",
+      "connectionStringSetting": "AzureSignalRConnectionString"
+    }
+  ],
+  "entryPoint": "default",
+  "scriptFile": "../src/functions/signalr-negotiate/index.js"
+}

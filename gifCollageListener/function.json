@@ -1,0 +1,26 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "type": "signalRTrigger",
+      "direction": "in",
+      "name": "signalRGifTrigger",
+      "parameterNames": [
+        "payload"
+      ],
+      "hubName": "gifcollage",
+      "category": "messages",
+      "event": "SendGif",
+      "connectionStringSetting": "AzureSignalRConnectionString"
+    },
+    {
+      "type": "signalR",
+      "direction": "out",
+      "name": "signalRGif",
+      "hubName": "gifcollage",
+      "connectionStringSetting": "AzureSignalRConnectionString"
+    }
+  ],
+  "entryPoint": "default",
+  "scriptFile": "../src/functions/gif-collage-listener/index.js"
+}
