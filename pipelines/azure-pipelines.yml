@@ -25,9 +25,9 @@ stages:
               npm prune --production
           - task: CopyFiles@2
             inputs:
-              contents: ".webpack/service/**"
+              sourceFolder: ".webpack/service/"
+              contents: "**"
               targetFolder: $(System.DefaultWorkingDirectory)/build
-              flattenFolders: true
           - task: CopyFiles@2
             inputs:
               contents: "node_modules/**"
