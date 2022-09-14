@@ -29,16 +29,16 @@ stages:
               rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
               includeRootFolder: false
               archiveFile: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
-          - task: PublishBuildArtifacts@1
-            inputs:
-              pathToPublish: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
-              artifactName: "drop"
+          - publish: "$(System.ArtifactsDirectory)/build$(Build.BuildId).zip"
+            artifact: drop
   - stage: Deploy
     displayName: Deploy Function App
     jobs:
       - job: Deploy
         displayName: Deploy
         steps:
+          - download: current
+            artifact: drop
           - task: AzureFunctionApp@1 # Add this at the end of your file
             inputs:
               azureSubscription: $(azureSubscription)
